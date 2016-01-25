@@ -2,6 +2,7 @@ package com.bufx.main;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.bufx.obj.DirectoryBook;
@@ -61,6 +62,37 @@ public class Test {
 			}
 			break;
 
+		case "3":
+			System.out.println("请输入姓名：");
+			String name2 = getConsole();
+			List<DirectoryEntiry> directoryEntiryListByName2 = directoryUtils.search(name2.trim(), directoryBook, "searchPhoneNumberByName");
+			if(directoryEntiryListByName2 == null ||directoryEntiryListByName2.size() == 0)
+				System.out.println("没有对应的电话号码！");
+			else
+			{
+				List<DirectoryEntiry> directoryEntiryListByPhoneNumber2 = new ArrayList<DirectoryEntiry>();
+				int[] inCount = new int[directoryEntiryListByName2.size()];
+				System.out.println("对应的电话号码为：");
+				for (int i = 0; i < directoryEntiryListByName2.size(); i++) {
+					directoryEntiryListByPhoneNumber2 = directoryUtils.search(directoryEntiryListByName2.get(i).getPhoneNumber().trim(), directoryBook, "searchNameByPhoneNumber");
+					inCount[i] = directoryEntiryListByPhoneNumber2.size();
+					System.out.println(directoryEntiryListByName2.get(i).getPhoneNumber());
+				}
+				List<Integer> resultList = getMaxIndex(inCount);
+				for (Integer result : resultList) {
+					String phoneNumber2 = directoryEntiryListByPhoneNumber2.get(result).getPhoneNumber();
+					List<DirectoryEntiry> directoryEntiryListByPhoneNumber3 = directoryUtils.search(directoryEntiryListByName2.get(result).getPhoneNumber().trim(), directoryBook, "searchNameByPhoneNumber");
+					System.out.println("对应人数最多的电话为：" + phoneNumber2);
+					StringBuffer sb = new StringBuffer();
+					for (DirectoryEntiry directoryEntiry : directoryEntiryListByPhoneNumber3) {
+						sb.append(directoryEntiry.getName() + ",");
+					}
+					String resultName = sb.toString().substring(0,sb.toString().length()-1); 
+					System.out.println("姓名："+ resultName);
+				}
+			}
+			break;
+			
 		default:
 			break;
 		}
@@ -71,5 +103,24 @@ public class Test {
 		InputStreamReader isr = new InputStreamReader(System.in);
 		BufferedReader br = new BufferedReader(isr);
 		return br.readLine();
+	}
+	
+	private static List<Integer> getMaxIndex(int[] numbers)
+	{
+		List<Integer> indexList = new ArrayList<Integer>();
+		if(numbers.length > 0){
+			int a = numbers[0];
+			for (int i = 0; i < numbers.length; i++) {
+				if(numbers[i] > a){
+					a = numbers[i];
+				}
+			}
+			for (int i = 0; i < numbers.length; i++) {
+				if(numbers[i] == a){
+					indexList.add(i);
+				}
+			}
+		}
+		return indexList;
 	}
 }
